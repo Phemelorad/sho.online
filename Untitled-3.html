@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="login-form">
+    Email: <input type="email" id="email" required /><br /><br />
+    Password: <input type="password" id="password" required /><br /><br />
+    <button type="submit">Login</button>
+  </form>
+  <p>Don't have an account? <a href="register.html">Register here</a></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script>
+    const supabaseUrl = 'https://your-project-id.supabase.co'; // 🔁 replace this
+    const supabaseKey = 'your-anon-key'; // 🔁 replace this
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        alert('Login failed: ' + error.message);
+      } else {
+        alert('Login successful!');
+        window.location.href = 'dashboard.html';
+      }
+    });
+  </script>
+</body>
+</html>
