@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Supabase Auth Demo</title>
   <style>
     body { font-family: Arial; padding: 30px; max-width: 400px; margin: auto; }
@@ -21,7 +21,7 @@
   <div id="register-form">
     <h2>Register</h2>
     <input type="email" id="register-email" placeholder="Email" required />
-    <input type="password" id="register-password" placeholder="Password" required />
+    <input type="password" id="register-password" placeholder="Password (min 6 characters)" required />
     <button onclick="register()">Register</button>
     <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
   </div>
@@ -43,13 +43,13 @@
   </div>
 
   <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co'; // ✅ Replace with your own
+    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Show/hide sections
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
     function showRegister() {
       document.getElementById("register-form").classList.remove("hidden");
       document.getElementById("login-form").classList.add("hidden");
@@ -74,12 +74,12 @@
       const email = document.getElementById("register-email").value;
       const password = document.getElementById("register-password").value;
 
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
 
       if (error) {
-        alert("Registration failed: " + error.message);
+        alert("❌ Registration failed: " + error.message);
       } else {
-        alert("Registration successful! Please check your email to confirm.");
+        alert("✅ Registration successful! Check your email to confirm.");
         showLogin();
       }
     }
@@ -92,7 +92,7 @@
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        alert("Login failed: " + error.message);
+        alert("❌ Login failed: " + error.message);
       } else {
         showDashboard(data.user);
       }
@@ -106,9 +106,9 @@
 
     // Check session on page load
     window.addEventListener('DOMContentLoaded', async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        showDashboard(user);
+      const { data, error } = await supabase.auth.getUser();
+      if (data?.user) {
+        showDashboard(data.user);
       } else {
         showLogin();
       }
