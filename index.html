@@ -2,116 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RADIPODI MICRO LOANS - Login</title>
-  <link rel="stylesheet" href="MAIN.css">
-  <style> 
+  <title>Login | RADIPODI MICRO LOANS</title>
+  <link rel="stylesheet" href="MAIN.css" />
+  <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 30px;
+      font-family: Arial;
       max-width: 400px;
-      margin: auto;
-    }
-    h1, h4 { text-align: center; }
-    .hidden { display: none; }
-    section {
-      margin-top: 20px;
-      border: 1px solid #ddd;
+      margin: 60px auto;
       padding: 20px;
-      border-radius: 8px;
     }
+    h1, h2 { text-align: center; }
     input, button {
-      padding: 10px;
-      margin-top: 10px;
       width: 100%;
+      padding: 10px;
+      margin-top: 12px;
     }
-    p {
-      text-align: center;
-    }
+    .error { color: red; margin-top: 10px; text-align: center; }
   </style>
 </head>
-
 <body>
-  <header class="txt">
-    <h1>RADIPODI MICRO LOANS</h1>
-    <h4>"Funding Tomorrow, Today."</h4>
-  </header>
 
-  <section>
-    <!-- Register Form -->
-    <div id="register-form">
-      <h2>Register</h2>
-      <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Password (min 6 characters)" required />
-      <button onclick="register()">Register</button>
-      <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-    </div>
+  <h1>RADIPODI MICRO LOANS</h1>
+  <h4 style="text-align:center;">"Funding Tomorrow, Today."</h4>
 
-    <!-- Login Form -->
-    <div id="login-form" class="hidden">
-      <h2>Login</h2>
-      <input type="email" id="login-email" placeholder="Email" required />
-      <input type="password" id="login-password" placeholder="Password" required />
-      <button onclick="login()">Login</button>
-      <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
-    </div>
-  </section>
+  <h2>Login</h2>
+  <form onsubmit="handleLogin(event)">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <p style="text-align:center;">Don't have an account? <a href="register.html">Register</a></p>
+  <div id="error" class="error"></div>
 
   <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = supabase.createClient(
+      'https://txexhbjpjywctqptnrgf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw'
+    );
 
-    function showRegister() {
-      document.getElementById("register-form").classList.remove("hidden");
-      document.getElementById("login-form").classList.add("hidden");
-    }
+    async function handleLogin(event) {
+      event.preventDefault();
+      document.getElementById("error").textContent = "";
 
-    function showLogin() {
-      document.getElementById("login-form").classList.remove("hidden");
-      document.getElementById("register-form").classList.add("hidden");
-    }
-
-    async function register() {
-      const email = document.getElementById("register-email").value;
-      const password = document.getElementById("register-password").value;
-
-      const { error } = await supabase.auth.signUp({ email, password });
-
-      if (error) {
-        alert("❌ Registration failed: " + error.message);
-      } else {
-        alert("✅ Registration successful! Please confirm your email, then log in.");
-        showLogin();
-      }
-    }
-
-    async function login() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        alert("❌ Login failed: " + error.message);
+        document.getElementById("error").textContent = "Login failed: " + error.message;
       } else {
-        const { data: sessionData } = await supabase.auth.getSession();
-        if (sessionData?.session) {
-          window.location.href = "apply.html"; // ✅ Redirect on successful login
-        } else {
-          alert("Login succeeded, but session not active. Please try again.");
-        }
+        // Redirect after login
+        window.location.href = "apply.html";
       }
     }
 
-    // On page load, check if user is already logged in and redirect
-    window.addEventListener('DOMContentLoaded', async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData?.session?.user) {
-        window.location.href = "apply.html"; // ✅ Already logged in? Go to apply.html
-      } else {
-        showLogin(); // Default view
+    // Optional: auto-redirect if already logged in
+    window.addEventListener("DOMContentLoaded", async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        window.location.href = "apply.html";
       }
     });
   </script>
