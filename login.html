@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="MAIN.css" />
+  <style>
+    .sty {
+      background-color: #3498db;
+      color: #000;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .sty:hover {
+      background-color: #095283;
+    }
+  </style>
+</head>
+<header class="txt">
+  <h1>RADIPODI MICRO LOANS</h1>
+  <h4>"Funding Tomorrow, Today."</h4>
+</header>
+<body>
+  <section>
+    <form onsubmit="handleLogin(event)">
+      <h2>Login</h2>
+      Email: <input type="email" id="email" required><br><br>
+      Password: <input type="password" id="password" required><br><br>
+      <input type="submit" value="Login">
+      <button class="sty" type="button" onclick="goToRegister()">Register Instead</button>
+    </form>
+  </section>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = supabase.createClient(
+      'https://txexhbjpjywctqptnrgf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw'
+    );
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        alert("❌ Login failed: " + error.message);
+      } else {
+        alert("✅ Login successful!");
+        window.location.href = "apply.html"; // or dashboard.html
+      }
+    }
+
+    function goToRegister() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
