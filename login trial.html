@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>login</title>
+  <link rel="stylesheet" href="MAIN.css">
+
+  <style> 
+   .hidden { display: none; }
+   button { padding: 10px; margin-top: 10px; width: 100%; }
+   </style>
+
+  
+</head>
+<header class="txt">
+    <h1>RADIPODI MICRO LOANS</h1>
+    <h4>"Funding Tomorrow, Today."</h4>
+</header>
+
+<body>
+    <section>
+   
+  <!-- Register Form -->
+  <div id="register-form">
+    <h2>Register</h2>
+    <input type="email" id="register-email" placeholder="Email" required />
+    <input type="password" id="register-password" placeholder="Password" required />
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+  </div>
+
+  <!-- Login Form -->
+  <div id="login-form" class="hidden">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email" required />
+    <input type="password" id="login-password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <h2>Welcome</h2>
+    <div id="user-info">Logged in as: <span id="user-email"></span></div>
+    <button onclick="logout()">Logout</button>
+  </div>
+  </section>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/dist/umd/supabase.min.js"></script>
+  <script>
+    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co'; // ✅ Replace with your own
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Show/hide sections
+    function showRegister() {
+      document.getElementById("register-form").classList.remove("hidden");
+      document.getElementById("login-form").classList.add("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
+    }
+
+    function showLogin() {
+      document.getElementById("login-form").classList.remove("hidden");
+      document.getElementById("register-form").classList.add("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
+    }
+
+    function showDashboard(user) {
+      document.getElementById("user-email").textContent = user.email;
+      document.getElementById("dashboard").classList.remove("hidden");
+      document.getElementById("login-form").classList.add("hidden");
+      document.getElementById("register-form").classList.add("hidden");
+    }
+
+    // Registration function
+    async function register() {
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+
+      const { error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        alert("Registration failed: " + error.message);
+      } else {
+        alert("Registration successful! Please check your email to confirm.");
+        showLogin();
+      }
+    }
+
+    // Login function
+    async function login() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert("Login failed: " + error.message);
+  } else {
+    // Optional: show a welcome dashboard section
+    // showDashboard(data.user);
+
+    // ✅ Redirect to your custom page
+    window.location.href = "apply.html"; // Replace with your actual page (e.g., loan-status.html)
+  }
+}
+
+
+    // Logout
+    async function logout() {
+      await supabase.auth.signOut();
+      showLogin();
+    }
+
+    // Check session on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        showDashboard(user);
+      } else {
+        showLogin();
+      }
+    });
+  </script>
+</body>
+</html>
