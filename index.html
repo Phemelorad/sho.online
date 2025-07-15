@@ -4,23 +4,22 @@
   <title>Register</title>
   <link rel="stylesheet" href="MAIN.css" />
 </head>
-<header class="txt">
-  <h1>RADIPODI MICRO LOANS</h1>
-  <h4>"Funding Tomorrow, Today."</h4>
-</header>
 <body>
+  <header class="txt">
+    <h1>RADIPODI MICRO LOANS</h1>
+    <h4>"Funding Tomorrow, Today."</h4>
+  </header>
+
   <section>
-    <form onsubmit="handleRegister(event)">
+    <form id="register-form">
       <h2>Register</h2>
       Email: <input type="email" id="email" required><br><br>
       Password: <input type="password" id="password" required><br><br>
       <input type="submit" value="Register">
     </form>
+    <p class="ttt">Already have an account? <a href="login.html">Login here</a></p>
   </section>
 
-  <p class="ttt">Already have an account? <a href="login.html">Login here</a></p>
-
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const supabase = supabase.createClient(
@@ -28,20 +27,22 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw'
     );
 
-    async function handleRegister(e) {
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      console.log("Registering:", email);
 
       const { error } = await supabase.auth.signUp({ email, password });
 
       if (error) {
         alert("❌ Registration failed: " + error.message);
+        console.error(error);
       } else {
-        alert("✅ Registration successful! Please check your email to confirm.");
+        alert("✅ Registration successful! Please check your email.");
         window.location.href = "login.html";
       }
-    }
+    });
   </script>
 </body>
 </html>
