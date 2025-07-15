@@ -4,52 +4,49 @@
   <meta charset="UTF-8">
   <title>login</title>
   <link rel="stylesheet" href="MAIN.css">
-
   <style> 
-   .hidden { display: none; }
-   button { padding: 10px; margin-top: 10px; width: 100%; }
-   </style>
-
-  
+    .hidden { display: none; }
+    button { padding: 10px; margin-top: 10px; width: 100%; }
+  </style>
 </head>
+
 <header class="txt">
-    <h1>RADIPODI MICRO LOANS</h1>
-    <h4>"Funding Tomorrow, Today."</h4>
+  <h1>RADIPODI MICRO LOANS</h1>
+  <h4>"Funding Tomorrow, Today."</h4>
 </header>
 
 <body>
-    <section>
-   
-  <!-- Register Form -->
-  <div id="register-form">
-    <h2>Register</h2>
-    <input type="email" id="register-email" placeholder="Email" required />
-    <input type="password" id="register-password" placeholder="Password" required />
-    <button onclick="register()">Register</button>
-    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-  </div>
+  <section>
+    <!-- Register Form -->
+    <div id="register-form">
+      <h2>Register</h2>
+      <input type="email" id="register-email" placeholder="Email" required />
+      <input type="password" id="register-password" placeholder="Password" required />
+      <button onclick="register()">Register</button>
+      <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+    </div>
 
-  <!-- Login Form -->
-  <div id="login-form" class="hidden">
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email" required />
-    <input type="password" id="login-password" placeholder="Password" required />
-    <button onclick="login()">Login</button>
-    <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
-  </div>
+    <!-- Login Form -->
+    <div id="login-form" class="hidden">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email" required />
+      <input type="password" id="login-password" placeholder="Password" required />
+      <button onclick="login()">Login</button>
+      <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+    </div>
 
-  <!-- Dashboard -->
-  <div id="dashboard" class="hidden">
-    <h2>Welcome</h2>
-    <div id="user-info">Logged in as: <span id="user-email"></span></div>
-    <button onclick="logout()">Logout</button>
-  </div>
+    <!-- Dashboard (not used in redirect, but kept if needed later) -->
+    <div id="dashboard" class="hidden">
+      <h2>Welcome</h2>
+      <div id="user-info">Logged in as: <span id="user-email"></span></div>
+      <button onclick="logout()">Logout</button>
+    </div>
   </section>
 
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.5/dist/umd/supabase.min.js"></script>
   <script>
-    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co'; // ✅ Replace with your own
+    const supabaseUrl = 'https://txexhbjpjywctqptnrgf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
@@ -73,7 +70,7 @@
       document.getElementById("register-form").classList.add("hidden");
     }
 
-    // Registration function
+    // Register function
     async function register() {
       const email = document.getElementById("register-email").value;
       const password = document.getElementById("register-password").value;
@@ -88,27 +85,20 @@
       }
     }
 
-    // Login function
+    // Login function with redirect
     async function login() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) {
-    alert("Login failed: " + error.message);
-  } else {
-    // Optional: show a welcome dashboard section
-    // showDashboard(data.user);
-
-    // ✅ Redirect to your custom page
-    window.location.href = "apply.html"; // Replace with your actual page (e.g., loan-status.html)
-  }
-}
-
+      if (error) {
+        alert("Login failed: " + error.message);
+      } else {
+        // ✅ Redirect to your desired page
+        window.location.href = "apply.html"; // Change if needed
+      }
+    }
 
     // Logout
     async function logout() {
@@ -116,11 +106,12 @@
       showLogin();
     }
 
-    // Check session on page load
+    // On page load: check if already logged in
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        showDashboard(user);
+        // Redirect to apply.html if already logged in
+        window.location.href = "apply.html";
       } else {
         showLogin();
       }
