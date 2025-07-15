@@ -2,26 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>login</title>
+  <title>RADIPODI MICRO LOANS - Login</title>
   <link rel="stylesheet" href="MAIN.css">
   <style> 
     .hidden { display: none; }
-    button { padding: 10px; margin-top: 10px; width: 100%; }
+    button, input {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    section {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
   </style>
 </head>
 
-<header class="txt">
-  <h1>RADIPODI MICRO LOANS</h1>
-  <h4>"Funding Tomorrow, Today."</h4>
-</header>
-
 <body>
+  <header class="txt">
+    <h1>RADIPODI MICRO LOANS</h1>
+    <h4>"Funding Tomorrow, Today."</h4>
+  </header>
+
   <section>
     <!-- Register Form -->
     <div id="register-form">
       <h2>Register</h2>
       <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Password" required />
+      <input type="password" id="register-password" placeholder="Password (min 6 characters)" required />
       <button onclick="register()">Register</button>
       <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
     </div>
@@ -34,13 +45,6 @@
       <button onclick="login()">Login</button>
       <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
     </div>
-
-    <!-- Dashboard (not used in redirect, but kept if needed later) -->
-    <div id="dashboard" class="hidden">
-      <h2>Welcome</h2>
-      <div id="user-info">Logged in as: <span id="user-email"></span></div>
-      <button onclick="logout()">Logout</button>
-    </div>
   </section>
 
   <!-- Supabase JS -->
@@ -50,27 +54,16 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZXhoYmpwanl3Y3RxcHRucmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2OTgzOTMsImV4cCI6MjA2NjI3NDM5M30.GabIf1ADV9S7P2TWDNzpkSgfMFwubQ9pYg55-UksUQw';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Show/hide sections
     function showRegister() {
       document.getElementById("register-form").classList.remove("hidden");
       document.getElementById("login-form").classList.add("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
     }
 
     function showLogin() {
       document.getElementById("login-form").classList.remove("hidden");
       document.getElementById("register-form").classList.add("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
     }
 
-    function showDashboard(user) {
-      document.getElementById("user-email").textContent = user.email;
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("login-form").classList.add("hidden");
-      document.getElementById("register-form").classList.add("hidden");
-    }
-
-    // Register function
     async function register() {
       const email = document.getElementById("register-email").value;
       const password = document.getElementById("register-password").value;
@@ -78,14 +71,13 @@
       const { error } = await supabase.auth.signUp({ email, password });
 
       if (error) {
-        alert("Registration failed: " + error.message);
+        alert("❌ Registration failed: " + error.message);
       } else {
-        alert("Registration successful! Please check your email to confirm.");
+        alert("✅ Registration successful! Please confirm your email, then log in.");
         showLogin();
       }
     }
 
-    // Login function with redirect
     async function login() {
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
@@ -93,24 +85,17 @@
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        alert("Login failed: " + error.message);
+        alert("❌ Login failed: " + error.message);
       } else {
-        // ✅ Redirect to your desired page
-        window.location.href = "apply.html"; // Change if needed
+        // ✅ Redirect to application page after successful login
+        window.location.href = "apply.html";
       }
     }
 
-    // Logout
-    async function logout() {
-      await supabase.auth.signOut();
-      showLogin();
-    }
-
-    // On page load: check if already logged in
+    // On load: check if already logged in and redirect to apply.html
     window.addEventListener('DOMContentLoaded', async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        // Redirect to apply.html if already logged in
+      const { data, error } = await supabase.auth.getUser();
+      if (data?.user) {
         window.location.href = "apply.html";
       } else {
         showLogin();
